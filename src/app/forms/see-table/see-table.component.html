@@ -1,0 +1,24 @@
+<p-dialog header="{{table?.tableName}}" [(visible)]="modal" [modal]="true"  [style]="{width: '60vw'}">
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Type</th>
+      <th scope="col">Null</th>
+      <th scope="col">Key</th>
+      <th scope="col">Default</th>
+      <th scope="col">Auto increment</th>
+    </tr>
+    </thead>
+    <tbody *ngFor="let t of table?.columns">
+    <tr>
+      <th scope="row">{{t.column_name}}</th>
+      <td>{{t.type}}</td>
+      <td>{{t.nullable}}</td>
+      <td>{{t.index}}</td>
+      <td>{{t.default}}</td>
+      <td>{{t.increment}}</td>
+    </tr>
+    </tbody>
+  </table>
+</p-dialog>

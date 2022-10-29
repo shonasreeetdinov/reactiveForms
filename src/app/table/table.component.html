@@ -1,0 +1,39 @@
+<div class="container">
+
+  <div class="row mt-5 ">
+    <div class="col-4 d-flex">
+      <div class="d-flex align-items-center">
+        <i class="pi pi-database fs-2 me-3"></i>
+        <h5 class="me-3">Database</h5>
+        <button pButton type="button" label="Create Table" icon="pi pi-plus" [routerLink]="'/create'" class="p-button-sm p-button-success"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-12">
+      <p-table [value]="tableService.tables" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Table Name</th>
+            <th>Table Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-table>
+          <tr>
+            <td>{{table.table_name}}</td>
+            <td>
+              <div class="d-flex">
+                <button pButton type="button" class="p-button-text " icon="pi pi-eye" (click)="showDialog(table)"></button>
+                <button pButton type="button" class="p-button-text " icon="pi pi-file-edit" (click)="redirect(table)"></button>
+                <button pButton type="button" class="p-button-text p-button-danger" icon="pi pi-trash" (click)="deleteTable(table)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<app-see-table></app-see-table>

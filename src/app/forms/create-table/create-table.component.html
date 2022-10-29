@@ -1,0 +1,107 @@
+<div class="container" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="row mt-5">
+    <div class="col-4 d-flex">
+      <div class="d-flex align-items-center cursor-pointer" [routerLink]="'/'">
+        <i class="pi pi-arrow-left me-2"></i>
+        <span class="fs-5">Back</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="d-flex flex-column">
+        <label class="font-bold mb-1">Table Name</label>
+        <input formControlName="table_name" type="text" class="p-inputtext-sm w-50" placeholder="New Table" pInputText />
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3" formArrayName="columns">
+    <label class="font-bold mb-1">Table Columns</label>
+    <div class="col-12">
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <td>Name</td>
+          <td>Type</td>
+          <td>Length</td>
+          <td>Not null</td>
+          <td>Auto Increment</td>
+          <td>Index</td>
+          <td>Default</td>
+          <td></td>
+        </tr>
+        </thead>
+        <tbody *ngFor="let migration of migrations.controls; let i = index" [formGroupName]="i">
+          <tr>
+            <td>
+              <input formControlName="column_name" type="text" class="w-100" placeholder="Column name" pInputText />
+            </td>
+            <td>
+              <p-dropdown formControlName="type" [options]="types" [style]="{'width': '100%'}" placeholder="Types" optionLabel=""></p-dropdown>
+            </td>
+            <td>
+              <p-inputNumber formControlName="length"></p-inputNumber>
+            </td>
+            <td class="w-1">
+              <p-checkbox formControlName="increment" [binary]="true"></p-checkbox>
+            </td>
+            <td class="w-1">
+              <p-checkbox formControlName="nullable" [binary]="true"></p-checkbox>
+            </td>
+            <td>
+              <p-dropdown formControlName="indexes" [options]="index" placeholder="Type" [style]="{'width': '100%'}" optionLabel=""></p-dropdown>
+            </td>
+            <td>
+              <input formControlName="default" type="text" class="w-100" placeholder="Default" pInputText />
+            </td>
+            <td>
+              <button pButton type="button" (click)="deleteMigrationInput(i)" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="d-flex justify-content-center">
+        <button type="button" (click)="addMigrationInput()" class="btn btn-success">+Add new Column</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div  class="row mt-3" formArrayName="relations">
+    <label class="font-bold mb-1">Relations</label>
+    <div class="col-12">
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <td>Foreign Column</td>
+          <td>Reference Table</td>
+          <td>Reference Column</td>
+          <td></td>
+        </tr>
+        </thead>
+        <tbody *ngFor="let relation of relations.controls; let i = index" [formGroupName]="i">
+        <tr>
+          <td>
+            <input formControlName="foreignColumn" type="text" class="w-100" placeholder="Column name" pInputText />
+          </td>
+          <td>
+            <p-dropdown formControlName="referenceTable" [options]="tableService.tables" [style]="{'width': '100%'}" placeholder="Table Name" optionLabel="table_name"></p-dropdown>
+          </td>
+          <td>
+            <p-dropdown formControlName="referenceColumn" [options]="getColumns(i)" [style]="{'width': '100%'}" placeholder="Column Name" optionLabel="column_name"></p-dropdown>
+          </td>
+          <td>
+            <button pButton type="button" (click)="deleteRelation(i)" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"></button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="d-flex justify-content-center">
+        <button type="button" (click)="addRelations()" class="btn btn-success">+Add new Relation</button>
+      </div>
+    </div>
+  </div>
+  <button type="button" (click)="onSubmit()" class="btn btn-success">Create Table</button>
+</div>
