@@ -16,12 +16,18 @@ export class UpdateTableComponent implements OnInit {
   index
   form: FormGroup;
   columns: any[] = [];
-
+  disabledColumns:any[] = []
   constructor(public tableService:TableService,
               private route: Router,
               private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    if(!this.tableService.selectedTable) {
+      this.route.navigate(['/'])
+    }
+    this.tableService.tables.forEach((v) => {
+      if(this.tableService.selectedTable?.id !== v.id) {this.disabledColumns.push(v)}
+    })
     this.types = [
       "bigInteger",
       'bigIncrements',
@@ -91,14 +97,15 @@ export class UpdateTableComponent implements OnInit {
       'year'
     ]
     this.index = [
-        " ",
-        "INDEX",
-        "UNIQUE",
-        "PRIMARY"
+        "null",
+        "index",
+        "unique",
+        "primary"
       ]
     this.form = new FormGroup({
-      table_name: new FormControl(this.tableService.selectedTable?.table_name,[Validators.required]),
-      columns: new FormArray([]),
+      id: new FormControl(this.tableService.selectedTable?.id),
+      name: new FormControl(this.tableService.selectedTable?.name,[Validators.required, Validators.minLength(2),Validators.maxLength(32)]),
+      columns: new FormArray([], [Validators.required]),
       relations: new FormArray([])
     })
     this.patchMigration()
@@ -131,39 +138,50 @@ export class UpdateTableComponent implements OnInit {
 
   GenRelationsRow(): FormGroup {
     return new FormGroup({
-      foreignColumn:new FormControl('',[Validators.required]),
-      referenceTable:new FormControl('',[Validators.required]),
-      referenceColumn:new FormControl('',[Validators.required]),
+      id: new FormControl(0),
+      foreignColumn:new FormControl('',[Validators.required, Validators.maxLength(64)]),
+      referenceTable:new FormControl(1,[Validators.required]),
+      referenceColumn:new FormControl(1,[Validators.required]),
+      onUpdate:new FormControl(false),
+      onDelete:new FormControl(false),
     });
   }
   GenMigrationsRow(): FormGroup{
     return new FormGroup({
-      name: new FormControl('', [Validators.required]),
+      id: new FormControl(0),
+      name: new FormControl('', [Validators.required, Validators.minLength(2),Validators.maxLength(32)]),
       type: new FormControl('',[Validators.required]),
-      length: new FormControl(''),
-      increment: new FormControl(''),
-      nullable: new FormControl(''),
-      index: new FormControl(''),
-      default: new FormControl(''),
+      length: new FormControl('', [Validators.maxLength(255)]),
+      nullable: new FormControl(false),
+      index: new FormControl('null'),
+      default: new FormControl('',[Validators.minLength(2), Validators.maxLength(32)]),
     })
   }
 
   getColumns(i) {
-    return this.form.get('relations')?.value[i].referenceTable.columns ?? [];
+    this.tableService.tables.forEach((v) => {
+      if(v.id === this.form.get('relations')?.value[i].referenceTable) {
+        this.columns = v.columns
+      }
+    })
+    return this.columns
   }
 
   patchMigration() {
     const control = <FormArray>this.form.get('columns')
-    this.tableService.selectedColumns.forEach(x => {
+    this.tableService?.selectedColumns?.forEach(x => {
       control.push(this.patchMigrationValue(x))
     })
   }
   patchMigrationValue(c) {
+    if(c.nullable === 1) {
+       c.nullable = true
+    }
     return this.fb.group({
-      column_name: c.column_name,
+      id: c?.id,
+      name: c.name,
       type: c.type,
       length: c.length,
-      increment: c.increment,
       index: c.index,
       nullable: c.nullable,
       default: c.default
@@ -172,21 +190,35 @@ export class UpdateTableComponent implements OnInit {
 
   patchRelation() {
     const control = <FormArray>this.form.get('relations')
-    this.tableService.selectedRelations.forEach(x => {
+    this.tableService.selectedRelations?.forEach(x => {
       control.push(this.patchRelationValue(x))
     })
   }
   patchRelationValue(r) {
-    return  this.fb.group({
+    let t
+    this.tableService.tables.forEach((v) => {
+      if(v.id === r.referenceTable) {
+        t = v
+        this.columns = t.columns
+      }
+    })
+    if(r.onDelete === 1 ) {r.onDelete = true}
+    if(r.onUpdate === 1 ) {r.onUpdate = true}
+    return this.fb.group({
+      id: r.id,
       foreignColumn: r.foreignColumn,
-      referenceTable: r.referenceTable,
-      referenceColumn: r.referenceColumn
+      referenceTable: t?.id,
+      referenceColumn: r.referenceColumn,
+      onDelete: r.onDelete,
+      onUpdate: r.onUpdate
     })
   }
 
   onUpdate() {
+    // console.log(this.form.value)
     this.tableService.updateTable(this.form.value)
     this.tableService.getAllTables()
     this.route.navigate(['/']).then(r => r)
   }
+
 }

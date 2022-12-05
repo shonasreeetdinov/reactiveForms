@@ -1,4 +1,4 @@
-<div class="container" [formGroup]="form">
+<div class="container mb-5" [formGroup]="form">
   <div class="row mt-5">
     <div class="col-4 d-flex">
       <div class="d-flex align-items-center cursor-pointer" [routerLink]="'/'">
@@ -12,7 +12,7 @@
     <div class="col-12">
       <div class="d-flex flex-column">
         <label class="font-bold mb-1">Table Name</label>
-        <input formControlName="table_name" type="text" class="p-inputtext-sm w-50" placeholder="New Table" pInputText />
+        <input formControlName="name" type="text" class="p-inputtext-sm w-50" placeholder="New Table" pInputText />
       </div>
     </div>
   </div>
@@ -27,7 +27,6 @@
           <td>Type</td>
           <td>Length</td>
           <td>Not null</td>
-          <td>Auto Increment</td>
           <td>Index</td>
           <td>Default</td>
           <td></td>
@@ -36,16 +35,13 @@
         <tbody *ngFor="let migration of migrations.controls; let i = index" [formGroupName]="i">
         <tr>
           <td>
-            <input formControlName="column_name" type="text" class="w-100" placeholder="Column name" pInputText />
+            <input formControlName="name" type="text" class="w-100" placeholder="Column name" pInputText />
           </td>
           <td>
             <p-dropdown formControlName="type" [options]="types" [style]="{'width': '100%'}" placeholder="Types" optionLabel=""></p-dropdown>
           </td>
           <td>
-            <p-inputNumber formControlName="length"></p-inputNumber>
-          </td>
-          <td class="w-1">
-            <p-checkbox formControlName="increment" [binary]="true"></p-checkbox>
+            <p-inputNumber formControlName="length" [max]="255"></p-inputNumber>
           </td>
           <td class="w-1">
             <p-checkbox formControlName="nullable" [binary]="true"></p-checkbox>
@@ -67,7 +63,6 @@
       </div>
     </div>
   </div>
-
   <div  class="row mt-3" formArrayName="relations">
     <label class="font-bold mb-1">Relations</label>
     <div class="col-12">
@@ -77,19 +72,27 @@
           <td>Foreign Column</td>
           <td>Reference Table</td>
           <td>Reference Column</td>
+          <td>On Update</td>
+          <td>On Delete</td>
           <td></td>
         </tr>
         </thead>
         <tbody *ngFor="let relation of relations.controls; let i = index" [formGroupName]="i">
         <tr>
           <td>
-            <input formControlName="foreignColumn" type="text" class="w-100" placeholder="Column name" pInputText />
+            <p-dropdown optionValue="name" formControlName="foreignColumn" [options]="tableService.selectedColumns"  [style]="{'width': '100%'}" optionLabel="name"></p-dropdown>
           </td>
           <td>
-            <p-dropdown formControlName="referenceTable" [options]="tableService.tables" [style]="{'width': '100%'}" placeholder="Table Name" optionLabel="table_name"></p-dropdown>
+            <p-dropdown optionValue="id" formControlName="referenceTable" [options]="disabledColumns" [style]="{'width': '100%'}" optionLabel="name"></p-dropdown>
           </td>
           <td>
-            <p-dropdown formControlName="referenceColumn" [options]="getColumns(i)" [style]="{'width': '100%'}" placeholder="Column Name" optionLabel="column_name"></p-dropdown>
+            <p-dropdown optionValue="id" formControlName="referenceColumn" [options]="getColumns(i)" [style]="{'width': '100%'}" optionLabel="name"></p-dropdown>
+          </td>
+          <td class="w-1">
+            <p-checkbox formControlName="onUpdate" [binary]="true"></p-checkbox>
+          </td>
+          <td class="w-1">
+            <p-checkbox formControlName="onDelete" [binary]="true"></p-checkbox>
           </td>
           <td>
             <button pButton type="button" (click)="deleteRelation(i)" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"></button>
@@ -102,5 +105,5 @@
       </div>
     </div>
   </div>
-  <button type="button" (click)="onUpdate()" class="btn btn-success">Update Table</button>
+  <button type="button" [disabled]="form.invalid" (click)="onUpdate()" class="btn btn-success">Update Table</button>
 </div>

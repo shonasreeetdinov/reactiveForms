@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {TableService} from "../../services/table.service";
-import {Router} from "@angular/router";
+import {Route, Router} from "@angular/router";
 
 @Component({
   selector: 'app-create-table',
@@ -14,9 +14,10 @@ export class CreateTableComponent implements OnInit {
   types
   index
   form: FormGroup;
+  columns: any;
 
   constructor(public tableService:TableService,
-              private route: Router) { }
+              public route: Router) { }
 
   ngOnInit(): void {
     this.types = [
@@ -88,14 +89,14 @@ export class CreateTableComponent implements OnInit {
         'year'
     ]
     this.index = [
-      " ",
-      "INDEX",
-      "UNIQUE",
-      "PRIMARY"
+      "null",
+      "index",
+      "unique",
+      "primary"
     ]
     this.form = new FormGroup({
-      table_name: new FormControl('',[Validators.required]),
-      columns: new FormArray([]),
+      name: new FormControl('',[Validators.required, Validators.minLength(4),Validators.maxLength(32)]),
+      columns: new FormArray([], [Validators.required]),
       relations: new FormArray([])
     })
   }
@@ -126,30 +127,36 @@ export class CreateTableComponent implements OnInit {
 
   GenRelationsRow(): FormGroup {
     return new FormGroup({
-      foreignColumn:new FormControl('',[Validators.required]),
+      foreignColumn:new FormControl('',[Validators.required, Validators.minLength(2),Validators.maxLength(32)]),
       referenceTable:new FormControl('',[Validators.required]),
       referenceColumn:new FormControl('',[Validators.required]),
+      onUpdate:new FormControl(''),
+      onDelete:new FormControl(''),
     });
   }
   GenMigrationsRow(): FormGroup{
     return new FormGroup({
-      column_name: new FormControl('', [Validators.required]),
+      name: new FormControl('', [Validators.required, Validators.minLength(2),Validators.maxLength(32)]),
       type: new FormControl('',[Validators.required]),
-      length: new FormControl(''),
-      increment: new FormControl(''),
-      nullable: new FormControl(''),
-      indexes: new FormControl(''),
-      default: new FormControl(''),
+      length: new FormControl('',[Validators.required, Validators.maxLength(255)]),
+      nullable: new FormControl(false,[Validators.required]),
+      index: new FormControl('',[Validators.required]),
+      default: new FormControl('',[Validators.minLength(2), Validators.maxLength(32)]),
     })
   }
 
   onSubmit() {
     this.tableService.createTable(this.form.value)
-    this.tableService.getAllTables()
     this.route.navigate(['/']).then(r => r)
+    this.tableService.getAllTables()
   }
 
   getColumns(i) {
-    return this.form.get('relations')?.value[i].referenceTable.columns ?? [];
+    this.tableService.tables.forEach((v) => {
+      if(v.id === this.form.get('relations')?.value[i]?.referenceTable) {
+        this.columns = v.columns
+      }
+    })
+    return this.columns
   }
 }

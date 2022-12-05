@@ -7,17 +7,15 @@
       <th scope="col">Null</th>
       <th scope="col">Key</th>
       <th scope="col">Default</th>
-      <th scope="col">Auto increment</th>
     </tr>
     </thead>
     <tbody *ngFor="let t of table?.columns">
     <tr>
-      <th scope="row">{{t.column_name}}</th>
+      <th scope="row">{{t.name}}</th>
       <td>{{t.type}}</td>
       <td>{{t.nullable}}</td>
       <td>{{t.index}}</td>
       <td>{{t.default}}</td>
-      <td>{{t.increment}}</td>
     </tr>
     </tbody>
   </table>

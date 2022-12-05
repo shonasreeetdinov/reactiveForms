@@ -1,3 +1,161 @@
 {
-  "tables": []
+  "tables": [
+    {
+      "name": "table1",
+      "columns": [
+        {
+          "id": 1,
+          "name": "column1",
+          "type": "boolean",
+          "length": 21,
+          "index": "primary",
+          "nullable": 1,
+          "default": "sadasd"
+        },
+        {
+          "id": 2,
+          "name": "column2",
+          "type": "boolean",
+          "length": 21,
+          "index": "primary",
+          "nullable": 0,
+          "default": "sad"
+        }
+      ],
+      "relations": [],
+      "id": 1
+    },
+    {
+      "name": "table2",
+      "columns": [
+        {
+          "name": "column",
+          "type": "bigIncrements",
+          "length": 212,
+          "index": "index",
+          "nullable": "",
+          "default": "qew"
+        }
+      ],
+      "relations": [
+        {
+          "foreignColumn": "relation1",
+          "referenceTable": 1,
+          "referenceColumn": 2,
+          "onDelete": 1,
+          "onUpdate": 1
+        },
+        {
+          "foreignColumn": "relation2",
+          "referenceTable": 4,
+          "referenceColumn": 7,
+          "onUpdate": 0,
+          "onDelete": 1
+        },
+        {
+          "foreignColumn": "relation3",
+          "referenceTable": 2,
+          "referenceColumn": 3,
+          "onUpdate": 0,
+          "onDelete": 1
+        }
+      ],
+      "id": 2
+    },
+    {
+      "name": "table3",
+      "columns": [
+        {
+          "id": 5,
+          "name": "column3",
+          "type": "boolean",
+          "length": 213,
+          "index": "index",
+          "nullable": 0,
+          "default": "qweqwe"
+        }
+      ],
+      "relations": [
+        {
+          "foreignColumn": "relation",
+          "referenceTable": 1,
+          "referenceColumn": 2,
+          "onDelete": 0,
+          "onUpdate": 1
+        }
+      ],
+      "id": 3
+    },
+    {
+      "name": "table4",
+      "columns": [
+        {
+          "id": 6,
+          "name": "column",
+          "type": "bigIncrements",
+          "length": 22,
+          "index": "unique",
+          "nullable": 1,
+          "default": "wqj wqe"
+        },
+        {
+          "id": 7,
+          "name": "name",
+          "type": "dateTime",
+          "length": 123,
+          "index": " ",
+          "nullable": 0,
+          "default": ""
+        }
+      ],
+      "relations": [
+        {
+          "foreignColumn": "relation",
+          "referenceTable": 1,
+          "referenceColumn": 2,
+          "onDelete": 0,
+          "onUpdate": 1
+        }
+      ],
+      "id": 4
+    },
+    {
+      "name": "table5",
+      "columns": [
+        {
+          "name": "name",
+          "type": "dateTime",
+          "length": 122,
+          "index": "primary",
+          "nullable": 1,
+          "default": "sad"
+        },
+        {
+          "name": "id",
+          "type": "bigIncrements",
+          "length": 233,
+          "index": "unique",
+          "nullable": 1,
+          "default": "1"
+        }
+      ],
+      "relations": [
+        {
+          "foreignColumn": "relation1",
+          "referenceTable": 4,
+          "referenceColumn": 6,
+          "onDelete": 1,
+          "onUpdate": 0
+        },
+        {
+          "foreignColumn": "relation2",
+          "referenceTable": 1,
+          "referenceColumn": 2,
+          "onDelete": 0,
+          "onUpdate": 1
+        }
+      ],
+      "id": 5
+    }
+  ]
 }

@@ -13,6 +13,7 @@ export class TableComponent implements OnInit {
 
   @ViewChild(SeeTableComponent) seeTableComponent: SeeTableComponent;
   @ViewChild(UpdateTableComponent) updateTableComponent: UpdateTableComponent;
+  deleteDisplay: boolean = false;
 
   constructor(public tableService: TableService,
               private router: Router) { }
@@ -22,16 +23,17 @@ export class TableComponent implements OnInit {
   }
 
   getAllTables() {
-    this.tableService.getAllTables()
+    this.tableService.getAllTables().subscribe((res) => {})
   }
 
-  deleteTable(table) {
+  deleteTable() {
     this.tableService.tables.forEach((v:any,i:any) => {
-      if(table.id === v.id) {
+      if(this.tableService.selectedTable.id === v.id) {
         this.tableService.tables.splice(i, 1)
       }
     })
-    this.tableService.deleteTable(table.id)
+    this.tableService.deleteTable(this.tableService.selectedTable.id)
+    this.deleteDisplay = false
   }
 
   showDialog(table) {
@@ -45,8 +47,12 @@ export class TableComponent implements OnInit {
       this.tableService.selectedTable = table
       this.tableService.selectedColumns = table.columns
       this.tableService.selectedRelations = table.relations
-      // this.updateTableComponent.showUpdate()
       this.router.navigate(["/update/" + table.id])
     }
+  }
+
+  deleteModal(table: any) {
+    this.tableService.selectedTable = table
+    this.deleteDisplay = true
   }
 }
